@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>翻轉氣球樂學所 — 兒童操作專注力評核表</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;600&display=swap');
+
+  :root {
+    --primary: #F4900C;
+    --primary-dark: #D4780A;
+    --primary-light: #F7B24A;
+    --accent: #FFD166;
+    --bg: #FFF9F0;
+    --card: #FFFFFF;
+    --text: #3A2000;
+    --muted: #A07840;
+    --border: #F5E0C0;
+    --success: #52B788;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .hero {
+    background: linear-gradient(135deg, #F4900C 0%, #E07800 55%, #C46000 100%);
+    padding: 40px 20px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before { content:''; position:absolute; top:-50px; right:-50px; width:250px; height:250px; border-radius:50%; background:rgba(255,255,255,0.07); }
+  .hero::after  { content:''; position:absolute; bottom:-30px; left:-30px; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,0.05); }
+  .hero-logo { font-family:'Noto Serif TC',serif; font-size:13px; letter-spacing:3px; color:rgba(255,255,255,0.75); margin-bottom:16px; }
+  .hero h1 { font-family:'Noto Serif TC',serif; font-size:26px; font-weight:700; color:#fff; line-height:1.4; margin-bottom:12px; }
+  .hero p { color:rgba(255,255,255,0.8); font-size:14px; line-height:1.7; max-width:480px; margin:0 auto; }
+
+  .progress-bar-wrap { background:#fff; border-bottom:1px solid var(--border); padding:14px 20px; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(244,144,12,0.10); }
+  .progress-info { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .progress-label { font-size:13px; color:var(--muted); font-weight:500; }
+  .progress-step { font-size:13px; color:var(--primary); font-weight:700; }
+  .progress-track { height:6px; background:var(--border); border-radius:999px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--accent)); border-radius:999px; transition:width 0.5s ease; width:17%; }
+
+  .container { max-width:640px; margin:0 auto; padding:24px 16px 80px; }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  .section-title { font-family:'Noto Serif TC',serif; font-size:18px; font-weight:700; color:var(--text); margin:28px 0 6px; padding-left:12px; border-left:4px solid var(--primary); line-height:1.4; }
+  .section-sub { font-size:13px; color:var(--muted); margin-bottom:16px; padding-left:16px; }
+
+  .card { background:var(--card); border-radius:var(--radius); padding:20px; margin-bottom:14px; border:1px solid var(--border); box-shadow:0 2px 8px rgba(244,144,12,0.06); }
+
+  .question-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:6px; line-height:1.5; }
+  .question-desc { font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.65; }
+  .required { color:#E07800; margin-left:2px; }
+
+  .field-group { margin-bottom:20px; }
+  .field-label { display:block; font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; }
+  .field-input { width:100%; padding:12px 16px; border:2px solid var(--border); border-radius:10px; font-size:15px; font-family:'Noto Sans TC',sans-serif; color:var(--text); background:#FDFAF5; transition:border-color 0.2s; outline:none; }
+  .field-input:focus { border-color:var(--primary); background:#fff; }
+  .field-hint { font-size:12px; color:var(--muted); margin-top:5px; }
+
+  .radio-group { display:flex; gap:10px; flex-wrap:wrap; }
+  .radio-btn { flex:1; min-width:100px; border:2px solid var(--border); border-radius:10px; padding:12px 10px; text-align:center; cursor:pointer; font-size:14px; font-weight:500; color:var(--muted); transition:all 0.2s; user-select:none; }
+  .radio-btn.selected { border-color:var(--primary); background:rgba(244,144,12,0.08); color:var(--primary-dark); font-weight:600; }
+
+  /* Rating: circles row, then labels row below */
+  .rating-wrap { display:flex; flex-direction:column; gap:0; }
+  .rating-scale { display:flex; gap:6px; justify-content:center; margin-bottom:8px; }
+  .rating-labels { display:flex; justify-content:space-between; align-items:flex-start; }
+  .rating-label-text { font-size:12px; color:var(--muted); max-width:42%; line-height:1.5; }
+  .rating-label-text.right { text-align:right; }
+  .rating-btn { width:46px; height:46px; border-radius:50%; border:2px solid var(--border); background:#FDFAF5; font-size:15px; font-weight:700; color:var(--muted); cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; font-family:'Noto Sans TC',sans-serif; }
+  .rating-btn:hover { border-color:var(--primary-light); color:var(--primary); }
+  .rating-btn.selected-1 { background:#E07B7B; border-color:#E07B7B; color:#fff; transform:scale(1.1); }
+  .rating-btn.selected-2 { background:#E0A05C; border-color:#E0A05C; color:#fff; transform:scale(1.1); }
+  .rating-btn.selected-3 { background:#D4B84A; border-color:#D4B84A; color:#fff; transform:scale(1.1); }
+  .rating-btn.selected-4 { background:#7BB87E; border-color:#7BB87E; color:#fff; transform:scale(1.1); }
+  .rating-btn.selected-5 { background:#52B788; border-color:#52B788; color:#fff; transform:scale(1.1); }
+
+  .game-header { background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%); border-radius:var(--radius); padding:18px 20px; margin-bottom:16px; color:#fff; }
+  .game-header h2 { font-family:'Noto Serif TC',serif; font-size:18px; font-weight:700; margin-bottom:6px; }
+  .game-header p { font-size:13px; opacity:0.88; line-height:1.6; }
+  .game-header .scoring-note { font-size:12px; background:rgba(255,255,255,0.18); border-radius:6px; padding:6px 10px; margin-top:10px; font-style:italic; line-height:1.5; }
+
+  .nav-row { display:flex; gap:12px; margin-top:32px; }
+  .btn-back { flex:1; padding:14px; border-radius:10px; border:2px solid var(--border); background:#fff; font-size:15px; font-weight:600; color:var(--muted); cursor:pointer; transition:all 0.2s; font-family:'Noto Sans TC',sans-serif; }
+  .btn-back:hover { border-color:var(--primary); color:var(--primary); }
+  .btn-next { flex:2; padding:14px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); font-size:15px; font-weight:700; color:#fff; cursor:pointer; transition:all 0.2s; font-family:'Noto Sans TC',sans-serif; box-shadow:0 4px 16px rgba(244,144,12,0.35); }
+  .btn-next:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(244,144,12,0.45); }
+
+  .score-hero { text-align:center; padding:40px 20px; background:linear-gradient(135deg,#F4900C,#D4780A); border-radius:20px; color:#fff; margin-bottom:24px; }
+  .score-big { font-size:72px; font-weight:700; font-family:'Noto Serif TC',serif; line-height:1; margin:12px 0 4px; }
+  .score-max { font-size:20px; opacity:0.65; }
+  .score-badge { display:inline-block; padding:6px 20px; border-radius:999px; font-size:15px; font-weight:700; margin-top:12px; background:rgba(255,255,255,0.22); }
+
+  .score-breakdown { margin-bottom:0; }
+  .score-game-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .score-row {
+    display:flex; align-items:center; padding:16px 20px;
+    border-bottom:1px solid var(--border); gap:12px;
+  }
+  .score-row-label { flex:1; font-size:15px; font-weight:700; color:var(--text); }
+  .score-row-bar-wrap { flex:2; }
+  .score-row-bar { height:8px; background:var(--border); border-radius:999px; overflow:hidden; }
+  .score-row-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--primary),var(--accent)); transition:width 1s ease; }
+  .score-row-num { font-size:15px; font-weight:700; color:var(--primary); min-width:48px; text-align:right; }
+
+  /* Guidance inside each game block */
+  .guidance-label {
+    padding: 10px 20px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: #FFF9F0;
+  }
+  .guidance-range-item {
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+  .guidance-range-item:last-child { border-bottom: none; }
+  .guidance-range-item.current {
+    background: rgba(244,144,12,0.06);
+  }
+  .guidance-range-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px 8px;
+  }
+  .guidance-range-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    background: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .guidance-range-item.current .guidance-range-badge {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .guidance-range-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .guidance-range-item.current .guidance-range-title {
+    color: var(--primary-dark);
+  }
+  .guidance-range-age {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .guidance-range-body {
+    padding: 0 20px 14px 20px;
+  }
+  .guidance-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    align-items: flex-start;
+  }
+  .guidance-row-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .guidance-row-content {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.65;
+    opacity: 0.75;
+  }
+  .guidance-range-item.current .guidance-row-content {
+    opacity: 1;
+  }
+  .current-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .complete-note { text-align:center; padding:20px; background:rgba(82,183,136,0.08); border:1px solid rgba(82,183,136,0.25); border-radius:var(--radius); margin-bottom:16px; }
+  .complete-note h3 { color:var(--success); font-size:16px; margin-bottom:6px; }
+  .complete-note p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+  .error-msg { color:#E07B7B; font-size:13px; margin-top:6px; display:none; }
+  .error-msg.show { display:block; }
+
+  /* Guidance cards */
+  .guidance-section { margin-top:28px; }
+  .guidance-game-title {
+    font-family:'Noto Serif TC',serif;
+    font-size:16px;
+    font-weight:700;
+    color:var(--text);
+    margin:24px 0 10px;
+    padding-left:12px;
+    border-left:4px solid var(--primary);
+  }
+  .guidance-card {
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:12px;
+  }
+  .guidance-level-bar {
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    padding:12px 18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .guidance-level-badge {
+    background:rgba(255,255,255,0.22);
+    border-radius:999px;
+    padding:3px 12px;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+    white-space:nowrap;
+  }
+  .guidance-level-title {
+    font-size:14px;
+    font-weight:700;
+    color:#fff;
+    line-height:1.3;
+  }
+  .guidance-level-age {
+    font-size:11px;
+    color:rgba(255,255,255,0.75);
+    margin-top:2px;
+  }
+  .guidance-body {
+    padding:14px 18px;
+  }
+  .guidance-item {
+    margin-bottom:10px;
+  }
+  .guidance-item:last-child { margin-bottom:0; }
+  .guidance-item-label {
+    font-size:12px;
+    font-weight:700;
+    color:var(--primary-dark);
+    letter-spacing:0.5px;
+    margin-bottom:4px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .guidance-item-text {
+    font-size:13px;
+    color:var(--text);
+    line-height:1.7;
+  }
+
+  @media (max-width:420px) { .hero h1{font-size:22px;} .rating-btn{width:42px;height:42px;font-size:14px;} .rating-scale{gap:4px;} .rating-label-text{font-size:11px;} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-logo">翻轉氣球樂學所</div>
+  <h1>遊戲學習單<br>兒童操作專注力評核表</h1>
+  <p>透過三個遊戲活動，全面評估孩子的專注力、手眼協調與學習能力</p>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-info">
+    <span class="progress-label" id="progressLabel">基本資料</span>
+    <span class="progress-step" id="progressStep">1 / 6</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="container">
+
+  <!-- PAGE 0: Basic Info -->
+  <div class="page active" id="page-0">
+    <div class="section-title">孩子基本資料</div>
+    <div class="section-sub">請填寫孩子的基本資訊以完成評估</div>
+    <div class="card">
+      <div class="field-group">
+        <label class="field-label">孩子實際年齡 <span class="required">*</span></label>
+        <input class="field-input" id="childAge" type="text" placeholder="例：2歲2個月" />
+        <div class="field-hint">請輸入具體的年齡，如「3歲4個月」</div>
+        <div class="error-msg" id="err-age">請填寫孩子年齡</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">孩子性別 <span class="required">*</span></label>
+        <div class="radio-group">
+          <div class="radio-btn" onclick="selectRadio('gender','boy',this)">👦 男生</div>
+          <div class="radio-btn" onclick="selectRadio('gender','girl',this)">👧 女生</div>
+        </div>
+        <div class="error-msg" id="err-gender">請選擇性別</div>
+      </div>
+      <div class="field-group" style="margin-bottom:0">
+        <label class="field-label">是否有上幼兒園 <span class="required">*</span></label>
+        <div class="radio-group">
+          <div class="radio-btn" onclick="selectRadio('kinder','yes',this)">✅ 有上幼兒園</div>
+          <div class="radio-btn" onclick="selectRadio('kinder','no',this)">🏠 尚未就讀</div>
+        </div>
+        <div class="error-msg" id="err-kinder">請選擇是否上幼兒園</div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-next" style="flex:3" onclick="goNext(0)">開始評估 →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 1: 遊戲一 剪剪彩虹橋 -->
+  <div class="page" id="page-1">
+    <div class="game-header">
+      <h2>✂️ 遊戲一  剪剪彩虹橋</h2>
+      <p>遊戲目的：培養孩子的持續性注意力、手眼協調、顏色認知等能力。</p>
+      <div class="scoring-note">評分標準：1 = 尚未觀察到 ／ 3 = 偶爾能做到 ／ 5 = 穩定且純熟地做到</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">事前準備：孩子能妥善準備工具嗎？ 剪刀、膠水/雙面膠 <span class="required">*</span></div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g1-prep">
+        <button class="rating-btn" onclick="setRating('g1-prep',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g1-prep',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g1-prep',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g1-prep',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g1-prep',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">孩子不知道位置，也擔心孩子危險。</span>
+        <span class="rating-label-text right">熟知工具位置，且能妥善使用。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g1-prep">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">1. 抓握穩定度（基礎肌肉）<span class="required">*</span></div>
+      <div class="question-desc">孩子能正確將手指放入指圈（大拇指朝上），且在剪紙過程中手型不會走樣嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g1-q1">
+        <button class="rating-btn" onclick="setRating('g1-q1',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g1-q1',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g1-q1',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g1-q1',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g1-q1',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">握法不正確，需大人手把手協助。</span>
+        <span class="rating-label-text right">拿取與操作時手勢精確穩定。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g1-q1">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">2. 動力控制（開合流暢度）<span class="required">*</span></div>
+      <div class="question-desc">孩子能流暢地進行「張開」與「合上」的動作，不會卡住或需要雙手並用嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g1-q2">
+        <button class="rating-btn" onclick="setRating('g1-q2',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g1-q2',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g1-q2',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g1-q2',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g1-q2',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">開合費力，動作斷續或需雙手操作。</span>
+        <span class="rating-label-text right">單手操作極為流暢，有節奏感。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g1-q2">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">3. 視覺追蹤（沿線能力）</div>
+      <div class="question-desc">孩子剪裁時，眼睛能盯著剪刀尖端，並大致維持在虛線上嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g1-q3">
+        <button class="rating-btn" onclick="setRating('g1-q3',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g1-q3',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g1-q3',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g1-q3',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g1-q3',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">隨意亂剪，完全無視線條路徑。</span>
+        <span class="rating-label-text right">視線專注，剪裁路徑與虛線高度重合。</span>
+      </div>
+    </div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">4. 雙手協調（輔助手旋轉）<span class="required">*</span></div>
+      <div class="question-desc">當遇到轉彎或角度時，另一隻手（拿紙的手）能主動配合旋轉紙張嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g1-q4">
+        <button class="rating-btn" onclick="setRating('g1-q4',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g1-q4',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g1-q4',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g1-q4',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g1-q4',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">拿紙的手完全不動，或只會拉扯紙張。</span>
+        <span class="rating-label-text right">雙手配合默契，能邊剪邊流暢地旋轉角度。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g1-q4">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">5. 任務完成度（耐心與細節）<span class="required">*</span></div>
+      <div class="question-desc">孩子能耐心地剪完一個完整的圖案（如一個圓形或正方形）而不中途放棄嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g1-q5">
+        <button class="rating-btn" onclick="setRating('g1-q5',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g1-q5',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g1-q5',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g1-q5',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g1-q5',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">剪兩下就分心，或因受挫而放棄。</span>
+        <span class="rating-label-text right">能高度專注直到完成整個圖案的輪廓。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g1-q5">請選擇評分</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goPrev(1)">← 返回</button>
+      <button class="btn-next" onclick="goNext(1)">下一頁 →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2: 遊戲二 轉轉摩天輪 -->
+  <div class="page" id="page-2">
+    <div class="game-header">
+      <h2>🎡 遊戲二  轉轉摩天輪</h2>
+      <p>遊戲目的：培養孩子的持續性注意力、手眼協調、顏色認知等能力。</p>
+      <div class="scoring-note">1分：需頻繁引導 ／ 3分：能部分達成 ／ 5分：完全獨立且快速完成</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">1. 視覺搜索速度（Visual Search）<span class="required">*</span></div>
+      <div class="question-desc">孩子是否能按照數字從摩天輪眾多的車廂中，找到與下方指定顏色相同的目標？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g2-q1">
+        <button class="rating-btn" onclick="setRating('g2-q1',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g2-q1',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g2-q1',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g2-q1',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g2-q1',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">眼神飄移，找不到目標，需要大人指點位置</span>
+        <span class="rating-label-text right">掃視後能立即鎖定正確的顏色車廂。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g2-q1">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">2. 雙手分離與協調（Bilateral Coordination）<span class="required">*</span></div>
+      <div class="question-desc">孩子能維持一隻手固定在下方的顏色圖案，同時另一隻手去指摩天輪上的目標嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g2-q2">
+        <button class="rating-btn" onclick="setRating('g2-q2',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g2-q2',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g2-q2',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g2-q2',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g2-q2',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">兩隻手會一起移動，或一隻手動時，另一隻手就放開了。</span>
+        <span class="rating-label-text right">雙手分工明確，一穩定、一搜尋，動作流暢。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g2-q2">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">3. 跨中線能力（Crossing the Midline）<span class="required">*</span></div>
+      <div class="question-desc">當目標在身體對側（例如右手指左邊的車廂）時，孩子能順暢跨越身體中線完成任務嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g2-q3">
+        <button class="rating-btn" onclick="setRating('g2-q3',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g2-q3',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g2-q3',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g2-q3',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g2-q3',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">遇到對側目標時感到困難，會扭轉整個身體或換手操作。</span>
+        <span class="rating-label-text right">手部跨越動作純熟，身體軸心維持穩定。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g2-q3">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">4. 顏色與符號邏輯對應（Color Matching）<span class="required">*</span></div>
+      <div class="question-desc">孩子能正確理解「下方的顏色 = 上方的目標」這層邏輯，且完全沒有找錯顏色嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g2-q4">
+        <button class="rating-btn" onclick="setRating('g2-q4',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g2-q4',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g2-q4',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g2-q4',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g2-q4',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">經常找錯顏色（例如點成鄰近的色塊）。</span>
+        <span class="rating-label-text right">認知邏輯清晰，反應零錯誤。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g2-q4">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">5. 持續性注意力（Sustained Attention）<span class="required">*</span></div>
+      <div class="question-desc">孩子能連續完成 1-13 號（或全部顏色）的挑戰，且過程中沒有因為分心而中斷嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g2-q5">
+        <button class="rating-btn" onclick="setRating('g2-q5',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g2-q5',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g2-q5',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g2-q5',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g2-q5',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">指了 2-3 個就想離開，或開始玩弄紙張。</span>
+        <span class="rating-label-text right">能高度專注完成整套摩天輪循環。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g2-q5">請選擇評分</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goPrev(2)">← 返回</button>
+      <button class="btn-next" onclick="goNext(2)">下一頁 →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3: 遊戲三 找找熊Ho啦 — 記憶力 -->
+  <div class="page" id="page-3">
+    <div class="game-header">
+      <h2>🐻 遊戲三  找找熊Ho啦</h2>
+      <p>遊戲目的：訓練孩子的短期工作記憶，邏輯判斷，視覺搜索、語言認知及表達能力。</p>
+      <div class="scoring-note">記憶配對與認知開發（1-5分）<br>1分：需提示才能繼續 ／ 3分：能部分達成 ／ 5分：完全獨立且正確</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">1. 工作記憶能力（Working Memory）<span class="required">*</span></div>
+      <div class="question-desc">當翻開一張牌後，孩子能記住該位置的圖案，並在翻開下一張時做出正確判斷嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g3-q1">
+        <button class="rating-btn" onclick="setRating('g3-q1',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g3-q1',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g3-q1',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g3-q1',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g3-q1',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">翻過即忘，且重複翻開已經確認過的錯誤位置。</span>
+        <span class="rating-label-text right">能維持至少 2-3 組卡片的空間位置記憶。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g3-q1">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">2. 視覺搜索與特徵辨識（Visual Search）<span class="required">*</span></div>
+      <div class="question-desc">孩子能快速察覺「熊Ho啦」的細微差異（如姿勢、配件、顏色），而非只看到都是「熊Ho啦」就隨意配對嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g3-q2">
+        <button class="rating-btn" onclick="setRating('g3-q2',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g3-q2',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g3-q2',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g3-q2',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g3-q2',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">辨識速度慢，經常忽略細節差異而找錯。</span>
+        <span class="rating-label-text right">能精確掃視並瞬間鎖定特徵完全一致的目標。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g3-q2">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">3. 動作控制與認知抑制（Action Cognition &amp; Inhibition）<span class="required">*</span></div>
+      <div class="question-desc">孩子在思考時，手部動作是否能「等腦袋想好再動」，而不是衝動地亂翻一通？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g3-q3">
+        <button class="rating-btn" onclick="setRating('g3-q3',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g3-q3',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g3-q3',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g3-q3',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g3-q3',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">動作極度衝動，不等思考完成就隨意翻牌。</span>
+        <span class="rating-label-text right">動作有條理，每次翻牌都是經過判斷後的決定。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g3-q3">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">4. 詞彙與敘事能力（Language Encoding）<span class="required">*</span></div>
+      <div class="question-desc">在翻牌過程中，孩子是否能用口頭描述（如「吃飯」、「穿衣服」）來幫助自己記憶？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g3-q4">
+        <button class="rating-btn" onclick="setRating('g3-q4',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g3-q4',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g3-q4',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g3-q4',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g3-q4',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">無法用語言描述目標物的特徵。</span>
+        <span class="rating-label-text right">能主動、清晰地描述特徵，並藉此輔助邏輯思考。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g3-q4">請選擇評分</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goPrev(3)">← 返回</button>
+      <button class="btn-next" onclick="goNext(3)">下一頁 →</button>
+    </div>
+  </div>
+
+  <!-- PAGE 4: 遊戲三 找找熊Ho啦 — 聽覺注意力 -->
+  <div class="page" id="page-4">
+    <div class="game-header">
+      <h2>👂 遊戲三  找找熊Ho啦（聽覺注意力）</h2>
+      <p></p>
+      <div class="scoring-note">1分：需多次重複或簡化指令 ／ 3分：能大致理解但反應稍慢 ／ 5分：能精準且快速執行</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">1. 聽覺注意與選擇（Auditory Attention）<span class="required">*</span></div>
+      <div class="question-desc">在充滿干擾項（多張卡片）的情況下，孩子能專注聽完大人的指令，並在第一時間啟動搜索嗎？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g4-q1">
+        <button class="rating-btn" onclick="setRating('g4-q1',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g4-q1',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g4-q1',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g4-q1',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g4-q1',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">聽指令時容易恍神，或沒聽完就急著亂拿。</span>
+        <span class="rating-label-text right">能全程專注聆聽，並精確捕捉關鍵字。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g4-q1">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">2. 複雜語意理解（Semantic Comprehension）<span class="required">*</span></div>
+      <div class="question-desc">孩子能理解包含多個條件的指令嗎？（例如：「拿紅色牙刷」＋「在刷牙」）</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g4-q2">
+        <button class="rating-btn" onclick="setRating('g4-q2',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g4-q2',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g4-q2',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g4-q2',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g4-q2',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">只能記住最後一個詞，或混淆條件（例如拿成藍色牙刷）。</span>
+        <span class="rating-label-text right">能完全消化複合式指令，準確辨識出所有特徵。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g4-q2">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">3. 視覺搜索精確度（Visual Scanning）<span class="required">*</span></div>
+      <div class="question-desc">當大腦接收到指令後，眼睛能否在卡片陣列中快速掃描並精確定位目標？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g4-q3">
+        <button class="rating-btn" onclick="setRating('g4-q3',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g4-q3',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g4-q3',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g4-q3',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g4-q3',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">視線毫無章法，找不到目標卡片的位置</span>
+        <span class="rating-label-text right">視線移動有條理，能迅速鎖定目標。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g4-q3">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">4. 指令維持與執行（Instruction Retention）<span class="required">*</span></div>
+      <div class="question-desc">孩子在尋找卡片的過程中，是否能將指令暫存在大腦中，不需要大人反覆提醒？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g4-q4">
+        <button class="rating-btn" onclick="setRating('g4-q4',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g4-q4',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g4-q4',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g4-q4',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g4-q4',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">尋找超過 3 秒就忘記要找什麼，需要大人重複指令。</span>
+        <span class="rating-label-text right">能維持長時記憶直到任務完成，展現良好的工作記憶。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g4-q4">請選擇評分</div>
+    </div>
+
+    <div class="card">
+      <div class="question-title">5. 衝動抑制與反應速度（Inhibition &amp; Processing Speed）<span class="required">*</span></div>
+      <div class="question-desc">孩子是否能做到「想好再動」，且反應時間維持在合理的秒數內？</div>
+      <div class="rating-wrap">
+      <div class="rating-scale" id="rating-g4-q5">
+        <button class="rating-btn" onclick="setRating('g4-q5',1,this)">1</button>
+        <button class="rating-btn" onclick="setRating('g4-q5',2,this)">2</button>
+        <button class="rating-btn" onclick="setRating('g4-q5',3,this)">3</button>
+        <button class="rating-btn" onclick="setRating('g4-q5',4,this)">4</button>
+        <button class="rating-btn" onclick="setRating('g4-q5',5,this)">5</button>
+      </div>
+      <div class="rating-labels">
+        <span class="rating-label-text">手比腦快，隨便抓一張就問是不是這個。</span>
+        <span class="rating-label-text right">冷靜判斷後精確拿取，反應靈敏。</span>
+      </div>
+    </div>
+      <div class="error-msg" id="err-g4-q5">請選擇評分</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goPrev(4)">← 返回</button>
+      <button class="btn-next" onclick="submitForm()">完成提交 ✓</button>
+    </div>
+  </div>
+
+  <!-- PAGE 5: Result -->
+  <div class="page" id="page-5">
+    <div class="complete-note">
+      <h3>✅ 評估完成！</h3>
+      <p>感謝您完成本次兒童操作專注力評核。以下是孩子的評估結果摘要。</p>
+    </div>
+    <div class="score-hero">
+      <div style="font-size:14px;opacity:0.75;letter-spacing:2px">總分</div>
+      <div class="score-big" id="totalScore">—</div>
+      <div class="score-max">/ <span id="maxScore">—</span> 分</div>
+      <div class="score-badge" id="scoreBadge">計算中...</div>
+    </div>
+    <div class="section-title">各遊戲分數</div>
+    <div id="scoreBreakdown"></div>
+    <div class="card" style="margin-top:16px">
+      <div class="question-title" style="margin-bottom:8px">📌 評估說明</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8">
+        本評估表旨在協助觀察孩子在不同操作活動中的專注力表現，並非診斷工具。<br>
+        如有疑問，歡迎聯絡翻轉氣球樂學所的老師進行進一步諮詢。
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var currentPage = 0;
+var ratings = {};
+var radios = {};
+var pageLabels = ['基本資料','遊戲一：剪剪彩虹橋','遊戲二：轉轉摩天輪','遊戲三：記憶力','遊戲三：聽覺注意力','完成'];
+var fbDb = null;
+
+function tryLoadFirebase() {
+  var s = document.createElement('script');
+  s.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js';
+  s.onload = function() {
+    var s2 = document.createElement('script');
+    s2.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js';
+    s2.onload = function() {
+      try {
+        if (!firebase.apps.length) firebase.initializeApp({ databaseURL: 'https://ballonshop-ed21c-default-rtdb.asia-southeast1.firebasedatabase.app' });
+        fbDb = firebase.database();
+      } catch(e) {}
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s);
+}
+tryLoadFirebase();
+
+function selectRadio(key, val, el) {
+  radios[key] = val;
+  var btns = el.parentElement.querySelectorAll('.radio-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove('selected');
+  el.classList.add('selected');
+  var err = document.getElementById('err-' + key);
+  if (err) err.classList.remove('show');
+}
+
+function setRating(key, val, el) {
+  ratings[key] = val;
+  var container = document.getElementById('rating-' + key);
+  var btns = container.querySelectorAll('.rating-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].className = 'rating-btn';
+  el.className = 'rating-btn selected-' + val;
+  var err = document.getElementById('err-' + key);
+  if (err) err.classList.remove('show');
+}
+
+function updateProgress(page) {
+  var pct = Math.round((page / 5) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = pageLabels[page] || '完成';
+  document.getElementById('progressStep').textContent = (page + 1) + ' / 6';
+}
+
+function goNext(from) {
+  if (!validatePage(from)) return;
+  document.getElementById('page-' + from).classList.remove('active');
+  currentPage = from + 1;
+  document.getElementById('page-' + currentPage).classList.add('active');
+  updateProgress(currentPage);
+  window.scrollTo(0, 0);
+}
+
+function goPrev(from) {
+  document.getElementById('page-' + from).classList.remove('active');
+  currentPage = from - 1;
+  document.getElementById('page-' + currentPage).classList.add('active');
+  updateProgress(currentPage);
+  window.scrollTo(0, 0);
+}
+
+function showErr(id) { var el = document.getElementById(id); if (el) el.classList.add('show'); }
+
+function validatePage(page) {
+  var ok = true;
+  if (page === 0) {
+    if (!document.getElementById('childAge').value.trim()) { showErr('err-age'); ok = false; }
+    if (!radios['gender']) { showErr('err-gender'); ok = false; }
+    if (!radios['kinder']) { showErr('err-kinder'); ok = false; }
+  }
+  if (page === 1) {
+    var r1 = ['g1-prep','g1-q1','g1-q2','g1-q4','g1-q5'];
+    for (var i = 0; i < r1.length; i++) { if (!ratings[r1[i]]) { showErr('err-'+r1[i]); ok = false; } }
+  }
+  if (page === 2) {
+    var r2 = ['g2-q1','g2-q2','g2-q3','g2-q4','g2-q5'];
+    for (var i = 0; i < r2.length; i++) { if (!ratings[r2[i]]) { showErr('err-'+r2[i]); ok = false; } }
+  }
+  if (page === 3) {
+    var r3 = ['g3-q1','g3-q2','g3-q3','g3-q4'];
+    for (var i = 0; i < r3.length; i++) { if (!ratings[r3[i]]) { showErr('err-'+r3[i]); ok = false; } }
+  }
+  if (page === 4) {
+    var r4 = ['g4-q1','g4-q2','g4-q3','g4-q4','g4-q5'];
+    for (var i = 0; i < r4.length; i++) { if (!ratings[r4[i]]) { showErr('err-'+r4[i]); ok = false; } }
+  }
+  if (!ok) setTimeout(function() { var e = document.querySelector('.error-msg.show'); if (e) e.scrollIntoView({ behavior:'smooth', block:'center' }); }, 100);
+  return ok;
+}
+
+function calcScores() {
+  function sum(keys) { var s = 0; for (var i = 0; i < keys.length; i++) s += (ratings[keys[i]] || 0); return s; }
+  var g1  = sum(['g1-prep','g1-q1','g1-q2','g1-q3','g1-q4','g1-q5']);
+  var g2  = sum(['g2-q1','g2-q2','g2-q3','g2-q4','g2-q5']);
+  var g3a = sum(['g3-q1','g3-q2','g3-q3','g3-q4']);
+  var g3b = sum(['g4-q1','g4-q2','g4-q3','g4-q4','g4-q5']);
+  return { g1:g1, g2:g2, g3a:g3a, g3b:g3b, total:g1+g2+g3a+g3b, max:120 };
+}
+
+function getBadge(t, m) {
+  var p = t/m;
+  if (p >= 0.85) return '🌟 優秀';
+  if (p >= 0.70) return '💪 良好';
+  if (p >= 0.55) return '📈 進步中';
+  return '🌱 持續觀察';
+}
+
+var GUIDANCE = {
+  g1: [
+    {
+      range: [5, 10],
+      level: '5–10 分',
+      title: '啟蒙探索期',
+      age: '2-3 歲程度',
+      key: '孩子還在熟悉工具。',
+      suggest: '讓孩子練習「剪斷」短紙條就好，不要強求沿線。提供較厚的紙（如西卡紙）會更好剪。'
+    },
+    {
+      range: [11, 18],
+      level: '11–18 分',
+      title: '穩定練習期',
+      age: '4-5 歲程度',
+      key: '孩子已學會開合，正在挑戰方向控制。',
+      suggest: '練習長直線與簡單折線。這是提升「手眼協調」的黃金期，你的 Level 2 教材最適合他。'
+    },
+    {
+      range: [19, 30],
+      level: '19–25 分',
+      title: '靈巧進階期',
+      age: '5-6 歲',
+      key: '孩子已具備精細操作能力。',
+      suggest: '挑戰複雜的圓弧、波浪線或細碎圖案。可以開始嘗試更薄或材質不同的紙張。'
+    }
+  ],
+  g2: [
+    {
+      range: [1, 10],
+      level: '1–10 分',
+      title: '重在「色彩認知」',
+      age: '2-3 歲程度',
+      key: '總分若在 10 分以下是正常的。',
+      suggest: '家長可以先從「單手操作」開始，降低難度，只要孩子能指對顏色就給予鼓勵。'
+    },
+    {
+      range: [10, 20],
+      level: '10–20 分',
+      title: '重在「雙手協調」',
+      age: '4-5 歲程度',
+      key: '總分預期在 15-20 分。',
+      suggest: '這階段要觀察孩子是否能「一手固定、一手尋找」，這是大腦分區工作的關鍵練習。'
+    },
+    {
+      range: [21, 25],
+      level: '21 分以上',
+      title: '重在「反應速度」',
+      age: '6 歲以上',
+      key: '總分應在 21 分以上。',
+      suggest: '可以增加難度，例如：家長說「藍色」，孩子要同時用兩隻手指點中下方藍色與摩天輪上的 3 號或 9 號。'
+    }
+  ],
+  g3a: [
+    {
+      range: [1, 10],
+      level: '1–10 分',
+      title: '重在「認知與語言」',
+      age: '2-4 歲程度',
+      key: '此階段總分可能較低。',
+      suggest: '建議減少牌數（從 2 對開始），重點放在「語言表達」，引導孩子說出：「這隻熊在做什麼？」來強化認知。'
+    },
+    {
+      range: [11, 15],
+      level: '15 分以上',
+      title: '重在「工作記憶」',
+      age: '5-6 歲程度',
+      key: '總分預期在 15 分以上。',
+      suggest: '可以增加干擾項目，挑戰孩子的「視覺搜索」精確度。'
+    },
+    {
+      range: [16, 20],
+      level: '20 分',
+      title: '重在「策略與速度」',
+      age: '7 歲以上程度',
+      key: '已達到高階表現。',
+      suggest: '鼓勵孩子建立「空間座標」記憶法，觀察其是否能有系統地從左至右、由上而下進行搜索。'
+    }
+  ],
+  g3b: [
+    {
+      range: [5, 12],
+      level: '5–12 分',
+      title: '基礎聽解期',
+      age: '2-3 歲程度',
+      key: '指令先從「單一特徵」開始（例如：只要找「刷牙的」）。',
+      suggest: '等孩子能 100% 答對後，再增加形容詞（例如：「拿紅色的」刷牙熊）。'
+    },
+    {
+      range: [13, 19],
+      level: '13–19 分',
+      title: '穩定執行期',
+      age: '4-5 歲程度',
+      key: '增加干擾項的相似度。',
+      suggest: '例如放兩隻都在刷牙的熊，但一隻拿紅色牙刷，一隻拿藍色牙刷，挑戰孩子的語意細節。'
+    },
+    {
+      range: [20, 25],
+      level: '20–25 分',
+      title: '聽覺小高手',
+      age: '5-6 歲',
+      key: '挑戰「多重任務」指令。',
+      suggest: '例如：「先拿刷牙的，再拿睡覺的」，或是使用否定指令：「拿一個不是在刷牙的熊」。'
+    }
+  ]
+};
+
+function buildGameBlock(gameLabel, score, max, guidanceData) {
+  var pct = Math.round((score / max) * 100);
+
+  // Score bar row
+  var html = '<div class="score-game-block">';
+  html += '<div class="score-row">';
+  html += '<div class="score-row-label">' + gameLabel + '</div>';
+  html += '<div class="score-row-bar-wrap"><div class="score-row-bar"><div class="score-row-fill" style="width:' + pct + '%"></div></div></div>';
+  html += '<div class="score-row-num">' + score + '/' + max + '</div>';
+  html += '</div>';
+
+  // Guidance label
+  html += '<div class="guidance-label">📋 評分結果與分齡引導</div>';
+
+  // All ranges
+  for (var i = 0; i < guidanceData.length; i++) {
+    var item = guidanceData[i];
+    var isCurrent = (score >= item.range[0] && score <= item.range[1]);
+    // fallback: last item catches overflow
+    if (i === guidanceData.length - 1 && score > item.range[0]) isCurrent = (score >= item.range[0]);
+
+    html += '<div class="guidance-range-item' + (isCurrent ? ' current' : '') + '">';
+    html += '<div class="guidance-range-header">';
+    html += '<span class="guidance-range-badge">【' + item.level + '】</span>';
+    html += '<span class="guidance-range-title">' + item.title + (isCurrent ? '<span class="current-tag">目前</span>' : '') + '</span>';
+    html += '<span class="guidance-range-age">（' + item.age + '）</span>';
+    html += '</div>';
+    html += '<div class="guidance-range-body">';
+    html += '<div class="guidance-row"><span class="guidance-row-icon">📌</span><span class="guidance-row-content"><strong>重點：</strong>' + item.key + '</span></div>';
+    html += '<div class="guidance-row"><span class="guidance-row-icon">💡</span><span class="guidance-row-content"><strong>建議：</strong>' + item.suggest + '</span></div>';
+    html += '</div>';
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function submitForm() {
+  if (!validatePage(4)) return;
+  var scores = calcScores();
+
+  document.getElementById('page-4').classList.remove('active');
+  document.getElementById('page-5').classList.add('active');
+  updateProgress(5);
+  window.scrollTo(0, 0);
+
+  document.getElementById('totalScore').textContent = scores.total;
+  document.getElementById('maxScore').textContent = scores.max;
+  document.getElementById('scoreBadge').textContent = getBadge(scores.total, scores.max);
+
+  var games = [
+    { label:'遊戲一：剪剪彩虹橋', score:scores.g1,  max:30, data:GUIDANCE.g1  },
+    { label:'遊戲二：轉轉摩天輪', score:scores.g2,  max:25, data:GUIDANCE.g2  },
+    { label:'遊戲三：記憶力',     score:scores.g3a, max:20, data:GUIDANCE.g3a },
+    { label:'遊戲三：聽覺注意力', score:scores.g3b, max:25, data:GUIDANCE.g3b }
+  ];
+
+  var html = '';
+  for (var i = 0; i < games.length; i++) {
+    var g = games[i];
+    html += buildGameBlock(g.label, g.score, g.max, g.data);
+  }
+  document.getElementById('scoreBreakdown').innerHTML = html;
+
+  var now = new Date();
+  var id = 'as' + now.getTime();
+  var record = { id:id, timestamp:now.toISOString(), childAge:document.getElementById('childAge').value.trim(), gender:radios['gender']||'', kindergarten:radios['kinder']||'', ratings:ratings, scores:scores };
+
+  if (fbDb) { try { fbDb.ref('assessments/' + id).set(record); } catch(e) {} }
+  try { var ex = JSON.parse(localStorage.getItem('assessments')||'[]'); ex.push(record); localStorage.setItem('assessments', JSON.stringify(ex)); } catch(e) {}
+}
+</script>
+</body>
+</html>
