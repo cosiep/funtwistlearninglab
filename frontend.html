@@ -92,11 +92,6 @@
   .btn-next { flex:2; padding:14px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); font-size:15px; font-weight:700; color:#fff; cursor:pointer; transition:all 0.2s; font-family:'Noto Sans TC',sans-serif; box-shadow:0 4px 16px rgba(244,144,12,0.35); }
   .btn-next:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(244,144,12,0.45); }
 
-  .score-hero { text-align:center; padding:40px 20px; background:linear-gradient(135deg,#F4900C,#D4780A); border-radius:20px; color:#fff; margin-bottom:24px; }
-  .score-big { font-size:72px; font-weight:700; font-family:'Noto Serif TC',serif; line-height:1; margin:12px 0 4px; }
-  .score-max { font-size:20px; opacity:0.65; }
-  .score-badge { display:inline-block; padding:6px 20px; border-radius:999px; font-size:15px; font-weight:700; margin-top:12px; background:rgba(255,255,255,0.22); }
-
   .score-breakdown { margin-bottom:0; }
   .score-game-block {
     background: var(--card);
@@ -105,15 +100,25 @@
     overflow: hidden;
     margin-bottom: 14px;
   }
-  .score-row {
-    display:flex; align-items:center; padding:16px 20px;
-    border-bottom:1px solid var(--border); gap:12px;
+  .score-block-header {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--border);
   }
-  .score-row-label { flex:1; font-size:15px; font-weight:700; color:var(--text); }
-  .score-row-bar-wrap { flex:2; }
+  .score-block-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .score-block-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .score-row-bar-wrap { flex: 1; }
   .score-row-bar { height:8px; background:var(--border); border-radius:999px; overflow:hidden; }
   .score-row-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--primary),var(--accent)); transition:width 1s ease; }
-  .score-row-num { font-size:15px; font-weight:700; color:var(--primary); min-width:48px; text-align:right; }
+  .score-row-num { font-size:15px; font-weight:700; color:var(--primary); min-width:48px; text-align:right; flex-shrink:0; }
 
   /* Guidance inside each game block */
   .guidance-label {
@@ -774,13 +779,7 @@
       <h3>✅ 評估完成！</h3>
       <p>感謝您完成本次兒童操作專注力評核。以下是孩子的評估結果摘要。</p>
     </div>
-    <div class="score-hero">
-      <div style="font-size:14px;opacity:0.75;letter-spacing:2px">總分</div>
-      <div class="score-big" id="totalScore">—</div>
-      <div class="score-max">/ <span id="maxScore">—</span> 分</div>
-      <div class="score-badge" id="scoreBadge">計算中...</div>
-    </div>
-    <div class="section-title">各遊戲分數</div>
+    <div class="section-title" style="margin-top:8px">各遊戲分數</div>
     <div id="scoreBreakdown"></div>
     <div class="card" style="margin-top:16px">
       <div class="question-title" style="margin-bottom:8px">📌 評估說明</div>
@@ -808,7 +807,7 @@ function tryLoadFirebase() {
     s2.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js';
     s2.onload = function() {
       try {
-        if (!firebase.apps.length) firebase.initializeApp({ databaseURL: 'https://ballonshop-ed21c-default-rtdb.asia-southeast1.firebasedatabase.app' });
+        if (!firebase.apps.length) firebase.initializeApp({ databaseURL: 'https://funtwist-balloon-default-rtdb.asia-southeast1.firebasedatabase.app' });
         fbDb = firebase.database();
       } catch(e) {}
     };
@@ -918,16 +917,16 @@ var GUIDANCE = {
       suggest: '讓孩子練習「剪斷」短紙條就好，不要強求沿線。提供較厚的紙（如西卡紙）會更好剪。'
     },
     {
-      range: [11, 18],
-      level: '11–18 分',
+      range: [11, 20],
+      level: '11–20 分',
       title: '穩定練習期',
       age: '4-5 歲程度',
       key: '孩子已學會開合，正在挑戰方向控制。',
       suggest: '練習長直線與簡單折線。這是提升「手眼協調」的黃金期，你的 Level 2 教材最適合他。'
     },
     {
-      range: [19, 30],
-      level: '19–25 分',
+      range: [21, 30],
+      level: '21–30 分',
       title: '靈巧進階期',
       age: '5-6 歲',
       key: '孩子已具備精細操作能力。',
@@ -936,8 +935,8 @@ var GUIDANCE = {
   ],
   g2: [
     {
-      range: [1, 10],
-      level: '1–10 分',
+      range: [5, 10],
+      level: '5–10 分',
       title: '重在「色彩認知」',
       age: '2-3 歲程度',
       key: '總分若在 10 分以下是正常的。',
@@ -962,8 +961,8 @@ var GUIDANCE = {
   ],
   g3a: [
     {
-      range: [1, 10],
-      level: '1–10 分',
+      range: [5, 10],
+      level: '5–10 分',
       title: '重在「認知與語言」',
       age: '2-4 歲程度',
       key: '此階段總分可能較低。',
@@ -1017,12 +1016,14 @@ var GUIDANCE = {
 function buildGameBlock(gameLabel, score, max, guidanceData) {
   var pct = Math.round((score / max) * 100);
 
-  // Score bar row
+  // Game name + bar stacked vertically
   var html = '<div class="score-game-block">';
-  html += '<div class="score-row">';
-  html += '<div class="score-row-label">' + gameLabel + '</div>';
+  html += '<div class="score-block-header">';
+  html += '<div class="score-block-name">' + gameLabel + '</div>';
+  html += '<div class="score-block-bar-row">';
   html += '<div class="score-row-bar-wrap"><div class="score-row-bar"><div class="score-row-fill" style="width:' + pct + '%"></div></div></div>';
   html += '<div class="score-row-num">' + score + '/' + max + '</div>';
+  html += '</div>';
   html += '</div>';
 
   // Guidance label
@@ -1060,10 +1061,6 @@ function submitForm() {
   document.getElementById('page-5').classList.add('active');
   updateProgress(5);
   window.scrollTo(0, 0);
-
-  document.getElementById('totalScore').textContent = scores.total;
-  document.getElementById('maxScore').textContent = scores.max;
-  document.getElementById('scoreBadge').textContent = getBadge(scores.total, scores.max);
 
   var games = [
     { label:'遊戲一：剪剪彩虹橋', score:scores.g1,  max:30, data:GUIDANCE.g1  },
