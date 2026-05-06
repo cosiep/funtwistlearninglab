@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>翻轉氣球樂學所 — 兒童操作專注力評核</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #F4900C 0%, #D4780A 50%, #A85C00 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+body::before { content:''; position:absolute; top:-80px; right:-80px; width:320px; height:320px; border-radius:50%; background:rgba(255,255,255,0.07); pointer-events:none; }
+body::after  { content:''; position:absolute; bottom:-60px; left:-60px; width:240px; height:240px; border-radius:50%; background:rgba(255,255,255,0.05); pointer-events:none; }
+
+.logo { font-size:56px; margin-bottom:16px; }
+.brand { font-family:'Noto Serif TC',serif; font-size:13px; letter-spacing:4px; color:rgba(255,255,255,0.7); margin-bottom:10px; }
+.title { font-family:'Noto Serif TC',serif; font-size:28px; font-weight:700; color:#fff; text-align:center; line-height:1.4; margin-bottom:8px; }
+.sub { font-size:14px; color:rgba(255,255,255,0.75); text-align:center; line-height:1.7; margin-bottom:52px; max-width:320px; }
+
+.btns { display:flex; flex-direction:column; gap:14px; width:100%; max-width:320px; position:relative; z-index:1; }
+.btn {
+  width:100%; padding:20px 24px; border-radius:16px;
+  font-size:16px; font-weight:700; font-family:'Noto Sans TC',sans-serif;
+  cursor:pointer; transition:all 0.2s; border:none;
+  display:flex; align-items:center; gap:14px; text-decoration:none;
+}
+.btn-icon { font-size:26px; flex-shrink:0; }
+.btn-body { text-align:left; }
+.btn-label { font-size:16px; font-weight:700; display:block; }
+.btn-desc { font-size:12px; font-weight:400; opacity:0.72; margin-top:3px; display:block; }
+
+.btn-primary { background:#fff; color:#D4780A; box-shadow:0 6px 24px rgba(0,0,0,0.15); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(0,0,0,0.22); }
+
+.btn-secondary { background:rgba(255,255,255,0.15); color:#fff; border:1.5px solid rgba(255,255,255,0.35) !important; }
+.btn-secondary:hover { background:rgba(255,255,255,0.25); transform:translateY(-1px); }
+</style>
+</head>
+<body>
+  <div class="logo">🎈</div>
+  <div class="brand">翻轉氣球樂學所</div>
+  <h1 class="title">兒童操作<br>專注力評核表</h1>
+  <p class="sub">透過三個遊戲活動，全面評估孩子的專注力、手眼協調與學習能力</p>
+
+  <div class="btns">
+    <a href="frontend.html" class="btn btn-primary">
+      <span class="btn-icon">📋</span>
+      <span class="btn-body">
+        <span class="btn-label">開始評估</span>
+        <span class="btn-desc">填寫孩子的專注力評核表</span>
+      </span>
+    </a>
+    <a href="backend.html" class="btn btn-secondary">
+      <span class="btn-icon">🔒</span>
+      <span class="btn-body">
+        <span class="btn-label">後台管理</span>
+        <span class="btn-desc">查看評估記錄與分析數據</span>
+      </span>
+    </a>
+  </div>
+</body>
+</html>
