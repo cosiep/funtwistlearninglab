@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>翻轉氣球樂學所 — 評核後台</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --primary: #F4900C;
+    --primary-dark: #D4780A;
+    --accent: #FFD166;
+    --bg: #1A1000;
+    --surface: #221500;
+    --surface2: #2E1E00;
+    --border: rgba(244,144,12,0.22);
+    --text: #FFF4E0;
+    --muted: #B08040;
+    --success: #52B788;
+    --danger: #E07B7B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background: radial-gradient(ellipse at 30% 30%, rgba(244,144,12,0.13) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(255,209,102,0.07) 0%, transparent 60%), var(--bg); }
+  .login-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:48px 36px; width:100%; max-width:400px; box-shadow:0 20px 60px rgba(0,0,0,0.5); text-align:center; }
+  .login-logo { font-size:32px; margin-bottom:8px; }
+  .login-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .login-sub { font-size:13px; color:var(--muted); margin-bottom:32px; }
+  .login-input { width:100%; padding:14px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; font-size:16px; color:var(--text); font-family:'Noto Sans TC',sans-serif; outline:none; margin-bottom:16px; text-align:center; letter-spacing:4px; transition:border-color 0.2s; }
+  .login-input:focus { border-color:var(--primary); }
+  .login-btn { width:100%; padding:14px; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border:none; border-radius:10px; font-size:15px; font-weight:700; color:#fff; cursor:pointer; font-family:'Noto Sans TC',sans-serif; }
+  .login-err { color:var(--danger); font-size:13px; margin-top:12px; display:none; }
+
+  .app { display:none; }
+
+  .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 20px; height:60px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:100; }
+  .topbar-logo { font-size:20px; }
+  .topbar-title { font-size:15px; font-weight:700; color:var(--text); flex:1; }
+  .topbar-logout { font-size:13px; color:var(--muted); cursor:pointer; padding:6px 14px; border-radius:6px; border:1px solid var(--border); transition:all 0.2s; }
+  .topbar-logout:hover { border-color:var(--primary); color:var(--primary); }
+
+  .main { padding:24px 16px; max-width:900px; margin:0 auto; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:24px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; }
+  .stat-label { font-size:12px; color:var(--muted); letter-spacing:1px; margin-bottom:8px; }
+  .stat-value { font-size:28px; font-weight:700; color:var(--text); }
+  .stat-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .search-bar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .search-input { flex:1; min-width:200px; padding:11px 16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; font-size:14px; color:var(--text); font-family:'Noto Sans TC',sans-serif; outline:none; transition:border-color 0.2s; }
+  .search-input:focus { border-color:var(--primary); }
+  .search-input::placeholder { color:var(--muted); }
+  .filter-select { padding:11px 16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; font-size:14px; color:var(--text); font-family:'Noto Sans TC',sans-serif; outline:none; cursor:pointer; }
+  .btn-csv { padding:11px 18px; background:rgba(82,183,136,0.15); border:1px solid rgba(82,183,136,0.3); border-radius:10px; font-size:13px; font-weight:600; color:var(--success); cursor:pointer; font-family:'Noto Sans TC',sans-serif; white-space:nowrap; }
+  .btn-csv:hover { background:rgba(82,183,136,0.25); }
+
+  .records-header { font-size:13px; color:var(--muted); margin-bottom:12px; }
+
+  .record-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:12px; cursor:pointer; transition:border-color 0.2s; }
+  .record-card:hover { border-color:var(--primary); }
+  .record-card.expanded { border-color:var(--primary); }
+
+  .record-top { display:flex; align-items:flex-start; gap:14px; justify-content:space-between; }
+  .record-left { flex:1; }
+  .record-id { font-size:11px; color:var(--muted); margin-bottom:4px; font-family:monospace; }
+  .record-info { font-size:15px; font-weight:600; color:var(--text); margin-bottom:4px; }
+  .record-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .tag { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:600; border:1px solid; }
+  .tag-boy  { color:#74B0F4; border-color:rgba(116,176,244,0.4); background:rgba(116,176,244,0.1); }
+  .tag-girl { color:#F47EB5; border-color:rgba(244,126,181,0.4); background:rgba(244,126,181,0.1); }
+  .tag-kinder-yes { color:var(--success); border-color:rgba(82,183,136,0.4); background:rgba(82,183,136,0.1); }
+  .tag-kinder-no  { color:var(--muted); border-color:rgba(176,128,64,0.4); background:rgba(176,128,64,0.1); }
+  .tag-score { color:var(--accent); border-color:rgba(255,209,102,0.4); background:rgba(255,209,102,0.1); }
+
+  .record-right { text-align:right; min-width:80px; }
+  .record-total { font-size:24px; font-weight:700; color:var(--primary); line-height:1; margin-bottom:2px; }
+  .record-total-max { font-size:12px; color:var(--muted); }
+  .record-date { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .record-detail { display:none; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+  .record-card.expanded .record-detail { display:block; }
+
+  .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .detail-game { background:var(--surface2); border-radius:10px; padding:12px 14px; }
+  .detail-game-title { font-size:12px; color:var(--muted); margin-bottom:8px; font-weight:600; }
+  .detail-game-bar { height:6px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden; margin-bottom:4px; }
+  .detail-game-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--primary),var(--accent)); }
+  .detail-game-score { font-size:13px; font-weight:700; color:var(--text); }
+
+  .detail-ratings { background:var(--surface2); border-radius:10px; padding:12px 14px; }
+  .detail-ratings-title { font-size:12px; color:var(--muted); margin-bottom:10px; font-weight:600; }
+  .rating-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px; }
+  .rating-row:last-child { border-bottom:none; }
+  .rating-row-key { color:var(--muted); }
+  .rating-row-val { font-weight:700; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; }
+  .rv-1 { background:rgba(224,123,123,0.25); color:#E07B7B; }
+  .rv-2 { background:rgba(224,160,92,0.25); color:#E0A05C; }
+  .rv-3 { background:rgba(212,184,74,0.25); color:#D4B84A; }
+  .rv-4 { background:rgba(123,184,126,0.25); color:#7BB87E; }
+  .rv-5 { background:rgba(82,183,136,0.25); color:#52B788; }
+
+  .btn-delete { padding:8px 16px; background:rgba(224,123,123,0.1); border:1px solid rgba(224,123,123,0.3); border-radius:8px; font-size:12px; font-weight:600; color:var(--danger); cursor:pointer; font-family:'Noto Sans TC',sans-serif; margin-top:12px; }
+  .btn-delete:hover { background:rgba(224,123,123,0.2); }
+
+  .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+  .empty-state .icon { font-size:48px; margin-bottom:16px; }
+  .empty-state p { font-size:14px; line-height:1.6; }
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">🎈</div>
+    <div class="login-title">翻轉氣球樂學所</div>
+    <div class="login-sub">評核後台管理系統</div>
+    <input class="login-input" id="pwInput" type="password" placeholder="請輸入密碼" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" onclick="doLogin()">登入後台</button>
+    <div class="login-err" id="loginErr">密碼錯誤，請再試一次</div>
+  </div>
+</div>
+
+<div class="app" id="mainApp">
+  <div class="topbar">
+    <div class="topbar-logo">🎈</div>
+    <div class="topbar-title">評核後台 · 兒童操作專注力</div>
+    <div class="topbar-logout" onclick="doLogout()">登出</div>
+  </div>
+  <div class="main">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">TOTAL 總筆數</div><div class="stat-value" id="statTotal">—</div><div class="stat-sub">份評估記錄</div></div>
+      <div class="stat-card"><div class="stat-label">AVG 平均總分</div><div class="stat-value" id="statAvg">—</div><div class="stat-sub">/ 100 分</div></div>
+      <div class="stat-card"><div class="stat-label">MALE 男生比例</div><div class="stat-value" id="statBoy">—</div><div class="stat-sub"></div></div>
+      <div class="stat-card"><div class="stat-label">KINDERGARTEN 幼兒園</div><div class="stat-value" id="statKinder">—</div><div class="stat-sub">已就讀比例</div></div>
+    </div>
+
+    <div class="search-bar">
+      <input class="search-input" id="searchInput" placeholder="搜尋年齡..." oninput="renderList()" />
+      <select class="filter-select" id="filterGender" onchange="renderList()">
+        <option value="">全部性別</option>
+        <option value="boy">男生</option>
+        <option value="girl">女生</option>
+      </select>
+      <select class="filter-select" id="filterKinder" onchange="renderList()">
+        <option value="">幼兒園篩選</option>
+        <option value="yes">有上幼兒園</option>
+        <option value="no">未就讀</option>
+      </select>
+      <button class="btn-csv" onclick="exportCSV()">⬇ 匯出 CSV</button>
+    </div>
+
+    <div class="records-header" id="recordsHeader">載入中...</div>
+    <div id="recordsList"></div>
+  </div>
+</div>
+
+<script>
+var ADMIN_PW = 'admin123';
+var allRecords = [];
+var fbDb = null;
+
+var RATING_LABELS = {
+  'g1-prep':'剪刀準備','g1-q1':'抓握穩定','g1-q2':'開合流暢','g1-q3':'視覺追蹤','g1-q4':'雙手協調','g1-q5':'任務完成',
+  'g2-q1':'視覺搜索速度','g2-q2':'雙手分離協調','g2-q3':'跨中線能力','g2-q4':'顏色邏輯對應','g2-q5':'持續注意力',
+  'g3-q1':'工作記憶','g3-q2':'視覺特徵辨識','g3-q3':'動作認知抑制','g3-q4':'詞彙敘事能力',
+  'g4-q1':'聽覺注意與選擇','g4-q2':'複雜語意理解','g4-q3':'視覺搜索精確','g4-q4':'指令維持執行','g4-q5':'衝動抑制反應'
+};
+
+function doLogin() {
+  if (document.getElementById('pwInput').value === ADMIN_PW) {
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+function doLogout() {
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('pwInput').value = '';
+}
+
+function tryLoadFirebase() {
+  var s = document.createElement('script');
+  s.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js';
+  s.onload = function() {
+    var s2 = document.createElement('script');
+    s2.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js';
+    s2.onload = function() {
+      try {
+        if (!firebase.apps.length) firebase.initializeApp({ databaseURL: 'https://ballonshop-ed21c-default-rtdb.asia-southeast1.firebasedatabase.app' });
+        fbDb = firebase.database();
+        startWatching();
+      } catch(e) { loadFromLocalStorage(); }
+    };
+    s2.onerror = function() { loadFromLocalStorage(); };
+    document.head.appendChild(s2);
+  };
+  s.onerror = function() { loadFromLocalStorage(); };
+  document.head.appendChild(s);
+}
+
+function startWatching() {
+  fbDb.ref('assessments').on('value', function(snap) {
+    var data = snap.val();
+    allRecords = [];
+    if (data) {
+      var keys = Object.keys(data);
+      for (var i = 0; i < keys.length; i++) allRecords.push(data[keys[i]]);
+      allRecords.sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+    }
+    updateStats();
+    renderList();
+  });
+}
+
+function loadFromLocalStorage() {
+  try { allRecords = JSON.parse(localStorage.getItem('assessments') || '[]').sort(function(a,b){return new Date(b.timestamp)-new Date(a.timestamp);}); }
+  catch(e) { allRecords = []; }
+  updateStats();
+  renderList();
+}
+
+function loadData() {
+  document.getElementById('recordsHeader').textContent = '連線中...';
+  tryLoadFirebase();
+}
+
+function updateStats() {
+  var total = allRecords.length;
+  document.getElementById('statTotal').textContent = total;
+  if (total === 0) { document.getElementById('statAvg').textContent = '—'; document.getElementById('statBoy').textContent = '—'; document.getElementById('statKinder').textContent = '—'; return; }
+  var sumScore = 0, boys = 0, kinder = 0;
+  for (var i = 0; i < allRecords.length; i++) {
+    var r = allRecords[i];
+    sumScore += (r.scores && r.scores.total) ? r.scores.total : 0;
+    if (r.gender === 'boy') boys++;
+    if (r.kindergarten === 'yes') kinder++;
+  }
+  document.getElementById('statAvg').textContent = Math.round(sumScore / total);
+  document.getElementById('statBoy').textContent = Math.round(boys / total * 100) + '%';
+  document.getElementById('statKinder').textContent = Math.round(kinder / total * 100) + '%';
+}
+
+function getFilteredRecords() {
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  var gender = document.getElementById('filterGender').value;
+  var kinder = document.getElementById('filterKinder').value;
+  return allRecords.filter(function(r) {
+    if (gender && r.gender !== gender) return false;
+    if (kinder && r.kindergarten !== kinder) return false;
+    if (q && (r.childAge || '').toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+}
+
+function renderList() {
+  var records = getFilteredRecords();
+  document.getElementById('recordsHeader').textContent = '共 ' + records.length + ' 筆記錄';
+  if (records.length === 0) {
+    document.getElementById('recordsList').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>目前沒有評估記錄</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < records.length; i++) html += renderCard(records[i]);
+  document.getElementById('recordsList').innerHTML = html;
+}
+
+function renderCard(r) {
+  var total = (r.scores && r.scores.total) ? r.scores.total : 0;
+  var max = (r.scores && r.scores.max) ? r.scores.max : 100;
+  var pct = Math.round(total / max * 100);
+  var gTag = r.gender === 'boy' ? '<span class="tag tag-boy">男生</span>' : r.gender === 'girl' ? '<span class="tag tag-girl">女生</span>' : '';
+  var kTag = r.kindergarten === 'yes' ? '<span class="tag tag-kinder-yes">上幼兒園</span>' : r.kindergarten === 'no' ? '<span class="tag tag-kinder-no">未就讀</span>' : '';
+  var badge = pct >= 85 ? '🌟 優秀' : pct >= 70 ? '💪 良好' : pct >= 55 ? '📈 進步中' : '🌱 持續觀察';
+  var dateStr = '—';
+  if (r.timestamp) { var d = new Date(r.timestamp); dateStr = d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.getHours() + ':' + ('0'+d.getMinutes()).slice(-2); }
+
+  var scores = r.scores || {};
+  var games = [
+    { label:'遊戲一：剪剪彩虹橋', score: scores.g1  || 0, max:30 },
+    { label:'遊戲二：轉轉摩天輪', score: scores.g2  || 0, max:25 },
+    { label:'遊戲三：記憶力',     score: scores.g3a || 0, max:20 },
+    { label:'遊戲三：聽覺注意',   score: scores.g3b || 0, max:25 }
+  ];
+  var gameHtml = '';
+  for (var j = 0; j < games.length; j++) {
+    var g = games[j];
+    var gp = Math.round(g.score / g.max * 100);
+    gameHtml += '<div class="detail-game"><div class="detail-game-title">' + g.label + '</div><div class="detail-game-bar"><div class="detail-game-fill" style="width:' + gp + '%"></div></div><div class="detail-game-score">' + g.score + ' / ' + g.max + ' 分</div></div>';
+  }
+
+  var rtgs = r.ratings || {};
+  var rHtml = '';
+  var rkeys = Object.keys(rtgs);
+  for (var k = 0; k < rkeys.length; k++) {
+    var rk = rkeys[k]; var rv = rtgs[rk] || 0;
+    rHtml += '<div class="rating-row"><span class="rating-row-key">' + (RATING_LABELS[rk]||rk) + '</span><span class="rating-row-val rv-' + rv + '">' + rv + '</span></div>';
+  }
+
+  var safeId = (r.id || 'r' + Math.random().toString(36).slice(2)).replace(/[^a-zA-Z0-9]/g,'');
+
+  return '<div class="record-card" id="card-' + safeId + '" onclick="toggleCard(\'' + safeId + '\')">' +
+    '<div class="record-top"><div class="record-left">' +
+    '<div class="record-id">ID: ' + (r.id||'—') + '</div>' +
+    '<div class="record-info">年齡：' + (r.childAge||'未填') + '</div>' +
+    '<div class="record-tags">' + gTag + kTag + '<span class="tag tag-score">' + badge + '</span></div>' +
+    '</div><div class="record-right"><div class="record-total">' + total + '</div><div class="record-total-max">/ ' + max + '</div><div class="record-date">' + dateStr + '</div></div></div>' +
+    '<div class="record-detail"><div class="detail-grid">' + gameHtml + '</div>' +
+    '<div class="detail-ratings"><div class="detail-ratings-title">各項評分明細</div>' + (rHtml||'<div style="font-size:12px;color:var(--muted)">無資料</div>') + '</div>' +
+    '<button class="btn-delete" onclick="deleteRecord(event,\'' + (r.id||'') + '\')">🗑 刪除此記錄</button>' +
+    '</div></div>';
+}
+
+function toggleCard(sid) { var c = document.getElementById('card-' + sid); if (c) c.classList.toggle('expanded'); }
+
+function deleteRecord(event, id) {
+  event.stopPropagation();
+  if (!confirm('確定要刪除此筆評估記錄嗎？')) return;
+  if (fbDb && id) { try { fbDb.ref('assessments/' + id).remove(); } catch(e) {} }
+  allRecords = allRecords.filter(function(r) { return r.id !== id; });
+  try { localStorage.setItem('assessments', JSON.stringify(allRecords)); } catch(e) {}
+  updateStats(); renderList();
+}
+
+function exportCSV() {
+  var records = getFilteredRecords();
+  if (records.length === 0) { alert('目前沒有可匯出的資料'); return; }
+
+  var header = ['ID','時間','年齡','性別','上幼兒園','總分','遊戲一分','遊戲二分','遊戲三記憶','遊戲三聽覺',
+    '剪刀準備','抓握穩定','開合流暢','視覺追蹤','雙手協調','任務完成',
+    '視覺搜索速度','雙手分離協調','跨中線能力','顏色邏輯對應','持續注意力',
+    '工作記憶','視覺特徵辨識','動作認知抑制','詞彙敘事能力',
+    '聽覺注意選擇','複雜語意理解','視覺搜索精確','指令維持執行','衝動抑制反應'];
+
+  var rkeys = ['g1-prep','g1-q1','g1-q2','g1-q3','g1-q4','g1-q5','g2-q1','g2-q2','g2-q3','g2-q4','g2-q5','g3-q1','g3-q2','g3-q3','g3-q4','g4-q1','g4-q2','g4-q3','g4-q4','g4-q5'];
+  var rows = [header.join(',')];
+
+  for (var i = 0; i < records.length; i++) {
+    var r = records[i]; var s = r.scores || {}; var rt = r.ratings || {};
+    var row = [r.id||'', r.timestamp ? new Date(r.timestamp).toLocaleString('zh-TW') : '', r.childAge||'', r.gender==='boy'?'男':r.gender==='girl'?'女':'', r.kindergarten==='yes'?'是':r.kindergarten==='no'?'否':'', s.total||0, s.g1||0, s.g2||0, s.g3a||0, s.g3b||0];
+    for (var j = 0; j < rkeys.length; j++) row.push(rt[rkeys[j]] || 0);
+    rows.push(row.map(function(v) { var sv = String(v); return (sv.indexOf(',')!==-1||sv.indexOf('"')!==-1) ? '"'+sv.replace(/"/g,'""')+'"' : sv; }).join(','));
+  }
+
+  var blob = new Blob(['\uFEFF' + rows.join('\n')], { type:'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href = url; a.download = 'assessments_' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
