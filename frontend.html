@@ -781,6 +781,7 @@
     </div>
     <div class="section-title" style="margin-top:8px">各遊戲分數</div>
     <div id="scoreBreakdown"></div>
+    <div id="saveStatus"></div>
     <div class="card" style="margin-top:16px">
       <div class="question-title" style="margin-bottom:8px">📌 評估說明</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.8">
@@ -1080,8 +1081,25 @@ function submitForm() {
   var id = 'as' + now.getTime();
   var record = { id:id, timestamp:now.toISOString(), childAge:document.getElementById('childAge').value.trim(), gender:radios['gender']||'', kindergarten:radios['kinder']||'', ratings:ratings, scores:scores };
 
-  if (fbDb) { try { fbDb.ref('assessments/' + id).set(record); } catch(e) {} }
-  try { var ex = JSON.parse(localStorage.getItem('assessments')||'[]'); ex.push(record); localStorage.setItem('assessments', JSON.stringify(ex)); } catch(e) {}
+  if (fbDb) {
+    try {
+      fbDb.ref('assessments/' + id).set(record, function(error) {
+        if (error) {
+          document.getElementById('saveStatus').innerHTML =
+            '<div style="background:#FFF0F0;border:1px solid #E07B7B;border-radius:10px;padding:14px 18px;margin-top:12px;color:#C62828;font-size:13px;">⚠️ 資料儲存失敗，請確認網路連線後重新提交。</div>';
+        } else {
+          document.getElementById('saveStatus').innerHTML =
+            '<div style="background:#E8F5E9;border:1px solid #52B788;border-radius:10px;padding:14px 18px;margin-top:12px;color:#2E7D32;font-size:13px;">✅ 資料已成功儲存到後台！</div>';
+        }
+      });
+    } catch(e) {
+      document.getElementById('saveStatus').innerHTML =
+        '<div style="background:#FFF0F0;border:1px solid #E07B7B;border-radius:10px;padding:14px 18px;margin-top:12px;color:#C62828;font-size:13px;">⚠️ 資料儲存失敗，請確認網路連線後重新提交。</div>';
+    }
+  } else {
+    document.getElementById('saveStatus').innerHTML =
+      '<div style="background:#FFF0F0;border:1px solid #E07B7B;border-radius:10px;padding:14px 18px;margin-top:12px;color:#C62828;font-size:13px;">⚠️ 無法連線到資料庫，請確認網路後重新整理頁面再試。</div>';
+  }
 }
 </script>
 </body>
