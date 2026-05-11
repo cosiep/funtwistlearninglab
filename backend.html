@@ -128,7 +128,7 @@
   <div class="topbar">
     <div class="topbar-logo">🎈</div>
     <div class="topbar-title">評核後台 · 兒童操作專注力</div>
-    <div class="topbar-logout" onclick="doLogout()">登出</div>
+    <button onclick="location.reload()" style="font-size:12px;color:#52B788;cursor:pointer;padding:6px 12px;border-radius:6px;border:1px solid rgba(82,183,136,0.3);background:transparent;font-family:'Noto Sans TC',sans-serif;">🔄 重新整理</button><div class="topbar-logout" onclick="doLogout()">登出</div>
   </div>
   <div class="main">
     <div class="stats-grid">
@@ -197,12 +197,12 @@ function tryLoadFirebase() {
         if (!firebase.apps.length) firebase.initializeApp({ databaseURL: 'https://worksheet-1e6fe-default-rtdb.asia-southeast1.firebasedatabase.app' });
         fbDb = firebase.database();
         startWatching();
-      } catch(e) { loadFromLocalStorage(); }
+      } catch(e) { showFirebaseError(); }
     };
-    s2.onerror = function() { loadFromLocalStorage(); };
+    s2.onerror = function() { showFirebaseError(); };
     document.head.appendChild(s2);
   };
-  s.onerror = function() { loadFromLocalStorage(); };
+  s.onerror = function() { showFirebaseError(); };
   document.head.appendChild(s);
 }
 
@@ -220,11 +220,15 @@ function startWatching() {
   });
 }
 
-function loadFromLocalStorage() {
-  try { allRecords = JSON.parse(localStorage.getItem('assessments') || '[]').sort(function(a,b){return new Date(b.timestamp)-new Date(a.timestamp);}); }
-  catch(e) { allRecords = []; }
-  updateStats();
-  renderList();
+function showFirebaseError() {
+  document.getElementById('recordsHeader').textContent = '';
+  document.getElementById('recordsList').innerHTML =
+    '<div style="background:#FFF0F0;border:1px solid #E07B7B;border-radius:14px;padding:24px;text-align:center;color:#C62828;">' +
+    '<div style="font-size:32px;margin-bottom:12px;">⚠️</div>' +
+    '<div style="font-size:15px;font-weight:700;margin-bottom:8px;">無法連線到 Firebase 資料庫</div>' +
+    '<div style="font-size:13px;opacity:0.8;margin-bottom:16px;">請確認網路連線後，點下方按鈕重新整理</div>' +
+    '<button onclick="location.reload()" style="padding:10px 24px;background:#F4900C;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">重新整理</button>' +
+    '</div>';
 }
 
 function loadData() {
