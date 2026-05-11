@@ -128,7 +128,7 @@
   <div class="topbar">
     <div class="topbar-logo">🎈</div>
     <div class="topbar-title">評核後台 · 兒童操作專注力</div>
-    <button onclick="location.reload()" style="font-size:12px;color:#52B788;cursor:pointer;padding:6px 12px;border-radius:6px;border:1px solid rgba(82,183,136,0.3);background:transparent;font-family:'Noto Sans TC',sans-serif;">🔄 重新整理</button><div class="topbar-logout" onclick="doLogout()">登出</div>
+    <button onclick="fetchData()" style="font-size:12px;color:#52B788;cursor:pointer;padding:6px 12px;border-radius:6px;border:1px solid rgba(82,183,136,0.3);background:transparent;font-family:'Noto Sans TC',sans-serif;">🔄 重新整理</button><div class="topbar-logout" onclick="doLogout()">登出</div>
   </div>
   <div class="main">
     <div class="stats-grid">
@@ -186,38 +186,36 @@ function doLogout() {
   document.getElementById('pwInput').value = '';
 }
 
+var FB_REST = 'https://worksheet-1e6fe-default-rtdb.asia-southeast1.firebasedatabase.app';
+
 function tryLoadFirebase() {
-  var s = document.createElement('script');
-  s.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js';
-  s.onload = function() {
-    var s2 = document.createElement('script');
-    s2.src = 'https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js';
-    s2.onload = function() {
-      try {
-        if (!firebase.apps.length) firebase.initializeApp({ databaseURL: 'https://worksheet-1e6fe-default-rtdb.asia-southeast1.firebasedatabase.app' });
-        fbDb = firebase.database();
-        startWatching();
-      } catch(e) { showFirebaseError(); }
-    };
-    s2.onerror = function() { showFirebaseError(); };
-    document.head.appendChild(s2);
-  };
-  s.onerror = function() { showFirebaseError(); };
-  document.head.appendChild(s);
+  fetchData();
 }
 
-function startWatching() {
-  fbDb.ref('assessments').on('value', function(snap) {
-    var data = snap.val();
-    allRecords = [];
-    if (data) {
-      var keys = Object.keys(data);
-      for (var i = 0; i < keys.length; i++) allRecords.push(data[keys[i]]);
-      allRecords.sort(function(a, b) { return new Date(b.timestamp) - new Date(a.timestamp); });
-    }
-    updateStats();
-    renderList();
-  });
+function fetchData() {
+  document.getElementById('recordsHeader').textContent = '載入中...';
+  fetch(FB_REST + '/assessments.json')
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      allRecords = [];
+      if (data) {
+        var keys = Object.keys(data);
+        for (var i = 0; i < keys.length; i++) {
+          if (data[keys[i]]) allRecords.push(data[keys[i]]);
+        }
+        allRecords.sort(function(a, b) {
+          return new Date(b.timestamp) - new Date(a.timestamp);
+        });
+      }
+      updateStats();
+      renderList();
+    })
+    .catch(function(e) {
+      showFirebaseError();
+    });
 }
 
 function showFirebaseError() {
@@ -327,10 +325,12 @@ function toggleCard(sid) { var c = document.getElementById('card-' + sid); if (c
 function deleteRecord(event, id) {
   event.stopPropagation();
   if (!confirm('確定要刪除此筆評估記錄嗎？')) return;
-  if (fbDb && id) { try { fbDb.ref('assessments/' + id).remove(); } catch(e) {} }
-  allRecords = allRecords.filter(function(r) { return r.id !== id; });
-  try { localStorage.setItem('assessments', JSON.stringify(allRecords)); } catch(e) {}
-  updateStats(); renderList();
+  fetch(FB_REST + '/assessments/' + id + '.json', { method: 'DELETE' })
+    .then(function() {
+      allRecords = allRecords.filter(function(r) { return r.id !== id; });
+      updateStats(); renderList();
+    })
+    .catch(function() { alert('刪除失敗，請確認網路連線'); });
 }
 
 function exportCSV() {
